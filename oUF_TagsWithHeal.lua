@@ -221,7 +221,7 @@ local tagStrings = {
 
 	["happiness"] = [[function(unit)
 		if not UnitIsUnit(unit,"pet") or select(2,UnitClass("player")) ~= "HUNTER" then
-			return ""
+			return
 		end
 		if GetPetHappiness() == 1 then
 			return PET_HAPPINESS1
@@ -235,16 +235,12 @@ local tagStrings = {
 	["combat"] = [[function(unit)
 		if UnitAffectingCombat(unit) then
 			return "("..COMBAT..")"
-		else
-			return ""
 		end
 	end]],
 
 	["combatcolor"] = [[function(unit)
 		if UnitAffectingCombat(unit) then
 			return Hex(1,0,0)
-		else
-			return ""
 		end
 	end]],
 
@@ -266,8 +262,6 @@ local tagStrings = {
 		local race = UnitRace(unit)
 		if race then
 			return race
-		else
-			return ""
 		end
 	end]],
 
@@ -277,15 +271,13 @@ local tagStrings = {
 		if name and pvpname and name ~= pvpname then
 			pvpname = string.gsub(pvpname, " "..name, "")
 			return pvpname
-		else
-			return ""
 		end
 	end]],
 
 	["numrank"] = [[function(unit)
 		local rank = UnitPVPRank(unit)
 		if rank == 0 then
-			return ""
+			return
 		end
 		return rank-4
 	end]],
@@ -294,8 +286,6 @@ local tagStrings = {
 		local creature = UnitCreatureFamily(unit)
 		if creature then
 			return creature
-		else
-			return ""
 		end
 	end]],
 
@@ -303,15 +293,13 @@ local tagStrings = {
 		local _,faction = UnitFactionGroup(unit)
 		if faction then
 			return faction
-		else
-			return ""
 		end
 	end]],
 
 	["sex"] = [[function(unit)
 		local sex = UnitSex(unit)
 		if sex == 1 then
-			return ""
+			return
 		elseif sex == 2 then
 			return MALE
 		else
@@ -336,7 +324,6 @@ local tagStrings = {
 				return DruidForms[5487]
 			end
 		end
-		return ""
 	end]],
 
 	["guild"] = [[function(unit) return GetGuildInfo(unit) or "" end]],
@@ -350,8 +337,6 @@ local tagStrings = {
 		local heal = LHC:GetHealAmount(UnitGUID(unit), GetShowHots(), GetTime() + GetHealTimeFrame()) or 0
 		if heal > 0 then
 			return math.floor(heal * mod)
-		else
-			return ""
 		end
 	end]],
 
@@ -360,8 +345,6 @@ local tagStrings = {
 		local heal = LHC:GetHealAmount(UnitGUID(unit), LHC.DIRECT_HEALS, GetTime() + GetHealTimeFrame(), UnitGUID("player")) or 0
 		if heal > 0 then
 			return math.floor(heal * mod)
-		else
-			return ""
 		end
 	end]],
 
@@ -380,8 +363,6 @@ local tagStrings = {
 		end
 		if preHeal > 0 then
 			return math.floor(preHeal * mod)
-		else
-			return ""
 		end
 	end]],
 
@@ -402,8 +383,6 @@ local tagStrings = {
 		local afterHeal = totalHeal - preHeal - myHeal
 		if afterHeal > 0 then
 			return math.floor(afterHeal * mod)
-		else
-			return ""
 		end
 	end]],
 
@@ -412,8 +391,6 @@ local tagStrings = {
 		local heal = LHC:GetHealAmount(UnitGUID(unit), bit.bor(LHC.HOT_HEALS, LHC.CHANNEL_HEALS), GetTime() + GetHealTimeFrame()) or 0
 		if heal > 0 then
 			return math.floor(heal * mod)
-		else
-			return ""
 		end
 	end]],
 
@@ -602,9 +579,7 @@ local tagStrings = {
 		local hp,maxhp
 		hp = UnitHealth(unit)
 		maxhp = UnitHealthMax(unit)
-		if maxhp-hp == 0 then
-			return ""
-		else
+		if maxhp-hp ~= 0 then
 			return hp-maxhp
 		end
 	end]],
@@ -617,9 +592,7 @@ local tagStrings = {
 		hp = UnitHealth(unit)
 		maxhp = UnitHealthMax(unit)
 		local result = hp-maxhp+heal
-		if result == 0 then
-			return ""
-		else
+		if result ~= 0 then
 			if heal > 0 then
 				return Hex(0,1,0)..result.."|r"
 			else
@@ -662,9 +635,7 @@ local tagStrings = {
 	["missingpp"] = [[function(unit)
 		local mana = UnitPower(unit)
 		local manamax = UnitPowerMax(unit)
-		if manamax-mana == 0 then
-			return ""
-		else
+		if manamax-mana ~= 0 then
 			return mana-manamax
 		end
 	end]],
@@ -678,25 +649,23 @@ local tagStrings = {
 	end]],
 
 	["druid:pp"] = [[function(unit)
-		if unit ~= "player" then
-			return ""
+		if unit == "player" then
+			return UnitPower(unit, Enum.PowerType.Mana)
 		end
-		return UnitPower(unit, Enum.PowerType.Mana)
 	end]],
 
 	["druid:maxpp"] = [[function(unit)
-		if unit ~= "player" then
-			return ""
+		if unit == "player" then
+			return UnitPowerMax(unit, Enum.PowerType.Mana)
 		end
-		return UnitPowerMax(unit, Enum.PowerType.Mana)
 	end]],
 
 	["druid:missingpp"] = [[function(unit)
 		if unit ~= "player" then
-			return ""
+			return
 		end
 		if UnitPowerMax(unit, Enum.PowerType.Mana)-UnitPower(unit, Enum.PowerType.Mana) == 0 then
-			return ""
+			return
 		else
 			return UnitPower(unit, Enum.PowerType.Mana)-UnitPowerMax(unit, Enum.PowerType.Mana)
 		end
@@ -704,7 +673,7 @@ local tagStrings = {
 
 	["druid:perpp"] = [[function(unit)
 		if unit ~= "player" then
-			return ""
+			return
 		end
 		local mana,manamax = UnitPower(unit, Enum.PowerType.Mana),UnitPowerMax(unit, Enum.PowerType.Mana)
 		if manamax == 0 then
@@ -753,7 +722,7 @@ local tagStrings = {
 
 	["ignore"] = [[function(unit)
 		if not UnitIsPlayer(unit) then
-			return ""
+			return
 		end
 		local name = UnitName(unit)
 		for i=1, C_FriendList.GetNumIgnores() do
@@ -761,13 +730,12 @@ local tagStrings = {
 				return IGNORED
 			end
 		end
-		return ""
 	end]],
 
 	["abbrev:name"] = [[function(unit)
 		local name = UnitName(unit)
 		if not name then
-			return ""
+			return
 		end
 		return string.len(name) > 10 and abbrevCache[name] or name
 	end]],
@@ -789,8 +757,6 @@ local tagStrings = {
 			return GHOST
 		elseif not UnitIsConnected(unit) then
 			return FRIENDS_LIST_OFFLINE
-		else
-			return ""
 		end
 	end]],
 
@@ -802,8 +768,6 @@ local tagStrings = {
 		local classif = UnitClassification(unit)
 		if classif == "rare" or classif == "rareelite" then
 			return RARE
-		else
-			return ""
 		end
 	end]],
 
@@ -811,8 +775,6 @@ local tagStrings = {
 		local classif = UnitClassification(unit)
 		if classif == "elite" or classif == "rareelite" then
 			return ELITE
-		else
-			return ""
 		end
 	end]],
 
@@ -826,8 +788,6 @@ local tagStrings = {
 			return RARE.." "..ELITE
 		elseif classif == "worldboss" then
 			return BOSS
-		else
-			return ""
 		end
 	end]],
 
@@ -841,8 +801,6 @@ local tagStrings = {
 			return "RE"
 		elseif classif == "worldboss" then
 			return "BOSS"
-		else
-			return ""
 		end
 	end]],
 
@@ -858,15 +816,24 @@ local tagStrings = {
 		elseif UnitInParty(unit) and GetNumGroupMembers() > 0 then
 			return 1
 		end
-		return ""
+	end]],
+
+	["threat"] = [[function(unit)
+		local status, scaledPercentage, rawPercentage, threatValue
+		if UnitCanAssist("player", unit) then
+			status, scaledPercentage = select(2, UnitDetailedThreatSituation(unit, "target"))
+		else
+			status, scaledPercentage = select(2, UnitDetailedThreatSituation("player", unit))
+		end
+		if status then
+			return scaledPercentage.."%"
+		end
 	end]],
 
 	["aggrocolor"] = [[function(unit)
 		local aggro = (UnitThreatSituation(unit) or 0) > 1
 		if aggro then
 			return Hex(1,0,0)
-		else
-			return ""
 		end
 	end]],
 
@@ -895,7 +862,7 @@ local tagStrings = {
 	["reactcolor"] = [[function(unit)
 		local reaction = UnitReaction("player",unit)
 		if not reaction then
-			return ""
+			return
 		elseif reaction == 4 then
 			return Hex(LUF.db.profile.colors["neutral"])
 		elseif reaction < 4 then
@@ -939,7 +906,7 @@ local tagStrings = {
 		heal = math.floor(heal * mod)
 		local result = hp-maxhp+heal
 		if result == 0 then
-			return ""
+			return
 		else
 			if heal > 0 then
 				return Hex(0,1,0)..result.."|r"
@@ -962,8 +929,6 @@ local tagStrings = {
 	["civilian"] = [[function(unit)
 		if UnitIsCivilian(unit) then
 			return "("..DISHONORABLE_KILLS..")"
-		else
-			return ""
 		end
 	end]],
 
@@ -971,8 +936,6 @@ local tagStrings = {
 		local loyalty = GetPetLoyalty()
 		if loyalty then
 			return loyalty
-		else
-			return ""
 		end
 	end]],
 
@@ -1005,7 +968,7 @@ local tagStrings = {
 		local result = hp-maxhp+heal
 		if result == 0 then
 			if heal == 0 then
-				return ""
+				return
 			else
 				return Hex(0,1,0).."0".."|r"
 			end
@@ -1267,7 +1230,8 @@ local tagEvents = {
 	["classification"]      = "UNIT_CLASSIFICATION_CHANGED",
 	["shortclassification"] = "UNIT_CLASSIFICATION_CHANGED",
 	["group"]               = "GROUP_ROSTER_UPDATE",
-	["aggrocolor"]          = "UNIT_THREAT_SITUATION_UPDATE",
+	["threat"]              = "UNIT_THREAT_SITUATION_UPDATE UNIT_THREAT_LIST_UPDATE",
+	["aggrocolor"]          = "UNIT_THREAT_SITUATION_UPDATE UNIT_THREAT_LIST_UPDATE",
 	["classcolor"]          = "UNIT_CLASSIFICATION_CHANGED",
 	["class"]               = "UNIT_CLASSIFICATION_CHANGED",
 	["smartclass"]          = "UNIT_CLASSIFICATION_CHANGED",
