@@ -897,11 +897,11 @@ local tagStrings = {
 		if not reaction then
 			return ""
 		elseif reaction == 4 then
-			return Hex(LunaUF.db.profile.colors["neutral"])
+			return Hex(LUF.db.profile.colors["neutral"])
 		elseif reaction < 4 then
-			return Hex(LunaUF.db.profile.colors["hostile"])
+			return Hex(LUF.db.profile.colors["hostile"])
 		else
-			return Hex(LunaUF.db.profile.colors["friendly"])
+			return Hex(LUF.db.profile.colors["friendly"])
 		end
 	end]],
 
@@ -1062,19 +1062,19 @@ local tagStrings = {
 
 	["healthcolor"] = [[function(unit)
 		local percent = UnitHealth(unit) / UnitHealthMax(unit)
-		if( percent >= 1 ) then return Hex(LunaUF.db.profile.colors.green.r, LunaUF.db.profile.colors.green.g, LunaUF.db.profile.colors.green.b) end
-		if( percent == 0 ) then return Hex(LunaUF.db.profile.colors.red.r, LunaUF.db.profile.colors.red.g, LunaUF.db.profile.colors.red.b) end
+		if( percent >= 1 ) then return Hex(LUF.db.profile.colors.green.r, LUF.db.profile.colors.green.g, LUF.db.profile.colors.green.b) end
+		if( percent == 0 ) then return Hex(LUF.db.profile.colors.red.r, LUF.db.profile.colors.red.g, LUF.db.profile.colors.red.b) end
 		
 		local sR, sG, sB, eR, eG, eB = 0, 0, 0, 0, 0, 0
 		local modifier, inverseModifier = percent * 2, 0
 		if( percent > 0.50 ) then
-			sR, sG, sB = LunaUF.db.profile.colors.green.r, LunaUF.db.profile.colors.green.g, LunaUF.db.profile.colors.green.b
-			eR, eG, eB = LunaUF.db.profile.colors.yellow.r, LunaUF.db.profile.colors.yellow.g, LunaUF.db.profile.colors.yellow.b
+			sR, sG, sB = LUF.db.profile.colors.green.r, LUF.db.profile.colors.green.g, LUF.db.profile.colors.green.b
+			eR, eG, eB = LUF.db.profile.colors.yellow.r, LUF.db.profile.colors.yellow.g, LUF.db.profile.colors.yellow.b
 
 			modifier = modifier - 1
 		else
-			sR, sG, sB = LunaUF.db.profile.colors.yellow.r, LunaUF.db.profile.colors.yellow.g, LunaUF.db.profile.colors.yellow.b
-			eR, eG, eB = LunaUF.db.profile.colors.red.r, LunaUF.db.profile.colors.red.g, LunaUF.db.profile.colors.red.b
+			sR, sG, sB = LUF.db.profile.colors.yellow.r, LUF.db.profile.colors.yellow.g, LUF.db.profile.colors.yellow.b
+			eR, eG, eB = LUF.db.profile.colors.red.r, LUF.db.profile.colors.red.g, LUF.db.profile.colors.red.b
 		end
 		
 		inverseModifier = 1 - modifier
@@ -1096,10 +1096,10 @@ local tagStrings = {
 	end]],
 
 	["casttime"] = [[function(unit)
-		local name, _, texture, startTime, endTime = CastingInfo()
+		local name, _, texture, startTime, endTime = CastingInfo(unit)
 		local retTime
 		if not name then
-			name, _, texture, startTime, endTime = ChannelInfo()
+			name, _, texture, startTime, endTime = ChannelInfo(unit)
 			if name then
 				retTime = (endTime / 1000) - GetTime()
 			end
@@ -1327,7 +1327,7 @@ local function createOnUpdate(timer)
 		frame:SetScript('OnUpdate', function(self, elapsed)
 			if(total >= timer) then
 				for _, fs in next, strings do
-					if(fs.parent:IsShown() and UnitExists(fs.parent.unit)) then
+					if(fs:IsVisible() and UnitExists(fs.parent.unit)) then
 						fs:UpdateTag()
 					end
 				end
@@ -1362,8 +1362,6 @@ local onUpdateDelay = {}
 
 onUpdateDelay["numtargeting"] = 0.5
 onUpdateDelay["cnumtargeting"] = 0.5
-onUpdateDelay["range"] = 0.1
-onUpdateDelay["casttime"] = 0.1
 
 local escapeSequences = {
 	["||c"] = "|c",
