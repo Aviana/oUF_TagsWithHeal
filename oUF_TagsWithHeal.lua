@@ -1312,16 +1312,16 @@ Used to update all tags on a frame.
 * self - the unit frame from which to update the tags
 --]]
 local function Update(self)
-	if(self.__healtags) then
-		for fs in next, self.__healtags do
+	if(self.__tags) then
+		for fs in next, self.__tags do
 			fs:UpdateTag()
 		end
 	end
 end
 
 -- ElvUI block
-local onEnter = function(self) for fs in next, self.__mousehealtags do fs:SetAlpha(1) end end
-local onLeave = function(self) for fs in next, self.__mousehealtags do fs:SetAlpha(0) end end
+local onEnter = function(self) for fs in next, self.__mousetags do fs:SetAlpha(1) end end
+local onLeave = function(self) for fs in next, self.__mousetags do fs:SetAlpha(0) end end
 local onUpdateDelay = {}
 
 onUpdateDelay["numtargeting"] = 0.5
@@ -1426,7 +1426,7 @@ local function getTagFunc(tagstr)
 				local parent = self.parent
 				local unit = parent.unit
 
-				local customArgs = parent.__customhealargs
+				local customArgs = parent.__customargs
 				local realUnit = self.overrideUnit and parent.realUnit
 
 				_ENV._COLORS = parent.colors
@@ -1514,14 +1514,14 @@ Used to register a tag on a unit frame.
 local function Tag(self, fs, tagstr, ...)
 	if(not fs or not tagstr) then return end
 
-	if(not self.__healtags) then
-		self.__healtags = {}
-		self.__mousehealtags = {} -- ElvUI
-		self.__customhealargs = {} -- ElvUI
+	if(not self.__tags) then
+		self.__tags = {}
+		self.__mousetags = {} -- ElvUI
+		self.__customargs = {} -- ElvUI
 
 		tinsert(self.__elements, Update)
-	elseif(self.__healtags[fs]) then
-		-- We don't need to remove it from the __healtags table as Untag handles
+	elseif(self.__tags[fs]) then
+		-- We don't need to remove it from the __tags table as Untag handles
 		-- that for us.
 		self:Untag(fs)
 	end
@@ -1535,25 +1535,25 @@ local function Tag(self, fs, tagstr, ...)
 
 	local customArgs = tagstr:match('{(.-)}%]')
 	if customArgs then
-		self.__customhealargs[fs] = customArgs
+		self.__customargs[fs] = customArgs
 		tagstr = tagstr:gsub('{.-}%]', ']')
 	else
-		self.__customhealargs[fs] = nil
+		self.__customargs[fs] = nil
 	end
 
 	if tagstr:find('%[mouseover%]') then
-		self.__mousehealtags[fs] = true
+		self.__mousetags[fs] = true
 		fs:SetAlpha(0)
-		if not self.__HookHealFunc then
+		if not self.__HookFunc then
 			self:HookScript('OnEnter', onEnter)
 			self:HookScript('OnLeave', onLeave)
-			self.__HookHealFunc = true;
+			self.__HookFunc = true;
 		end
 		tagstr = tagstr:gsub('%[mouseover%]', '')
 	else
-		for fontString in next, self.__mousehealtags do
+		for fontString in next, self.__mousetags do
 			if fontString == fs then
-				self.__mousehealtags[fontString] = nil
+				self.__mousetags[fontString] = nil
 				fs:SetAlpha(1)
 			end
 		end
@@ -1602,7 +1602,7 @@ local function Tag(self, fs, tagstr, ...)
 	end
 
 	taggedFS[fs] = tagstr
-	self.__healtags[fs] = true
+	self.__tags[fs] = true
 end
 
 --[[ Tags: frame:Untag(fs)
@@ -1612,7 +1612,7 @@ Used to unregister a tag from a unit frame.
 * fs   - the font string holding the tag (FontString)
 --]]
 local function Untag(self, fs)
-	if(not fs or not self.__healtags) then return end
+	if(not fs or not self.__tags) then return end
 
 	unregisterEvents(fs)
 	for _, timers in next, eventlessUnits do
@@ -1626,7 +1626,7 @@ local function Untag(self, fs)
 	fs.UpdateTag = nil
 
 	taggedFS[fs] = nil
-	self.__healtags[fs] = nil
+	self.__tags[fs] = nil
 end
 
 oUF.TagsWithHeal = {
@@ -1674,6 +1674,6 @@ oUF.TagsWithHeal = {
 	end,
 }
 
-oUF:RegisterMetaFunction('TagWithHeal', Tag)
-oUF:RegisterMetaFunction('UntagWithHeal', Untag)
-oUF:RegisterMetaFunction('UpdateTagsWithHeal', Update)
+oUF:RegisterMetaFunction('Tag', Tag)
+oUF:RegisterMetaFunction('Untag', Untag)
+oUF:RegisterMetaFunction('UpdateTags', Update)
