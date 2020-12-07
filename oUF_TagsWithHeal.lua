@@ -819,7 +819,7 @@ local tagStrings = {
 	end]],
 
 	["threat"] = [[function(unit)
-		local status, scaledPercentage, rawPercentage, threatValue
+		local status, scaledPercentage
 		if UnitCanAssist("player", unit) then
 			status, scaledPercentage = select(2, UnitDetailedThreatSituation(unit, "target"))
 		else
