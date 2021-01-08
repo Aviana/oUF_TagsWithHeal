@@ -1170,7 +1170,6 @@ local LibEvents = {
 local tagEvents = {
 	["afk"]                 = "PLAYER_FLAGS_CHANGED",
 	["nameafk"]             = "PLAYER_FLAGS_CHANGED",
-	["afktime"]             = "PLAYER_FLAGS_CHANGED UNIT_CONNECTION",
 	["happiness"]           = "UNIT_HAPPINESS",
 	["combat"]              = "UNIT_COMBAT UNIT_FLAGS PLAYER_REGEN_DISABLED PLAYER_REGEN_ENABLED",
 	["combatcolor"]         = "UNIT_COMBAT UNIT_FLAGS PLAYER_REGEN_DISABLED PLAYER_REGEN_ENABLED",
@@ -1326,6 +1325,7 @@ local onUpdateDelay = {}
 
 onUpdateDelay["numtargeting"] = 0.5
 onUpdateDelay["cnumtargeting"] = 0.5
+onUpdateDelay["afktime"] = 0.5
 
 local escapeSequences = {
 	["||c"] = "|c",
