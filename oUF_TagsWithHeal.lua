@@ -1087,6 +1087,7 @@ local tagStrings = {
 
 	["percxppet"] = [[function(unit)
 		local currentXP, maxXP = GetPetExperience()
+		if maxXP == 0 then return end
 		return math.floor(currentXP/maxXP*10000)/100 .. "%"
 	end]],
 
