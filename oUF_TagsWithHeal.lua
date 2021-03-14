@@ -612,6 +612,30 @@ local tagStrings = {
 		end
 	end]],
 
+	["perstatus"] = [[function(unit)
+		local hp
+		local maxhp
+		hp = UnitHealth(unit)
+		maxhp = UnitHealthMax(unit)
+		if UnitIsGhost(unit) then
+			return GHOST
+		elseif not UnitIsConnected(unit) then
+			return FRIENDS_LIST_OFFLINE
+		elseif hp < 1 then
+			if feigncheck(unit) then
+				return feignDeath
+			else
+				return DEAD
+			end
+		else
+			if maxhp < 1 then
+				return "0%"
+			else
+				return math.ceil((hp / maxhp) * 100).."%"
+			end
+		end
+	end]],
+
 	["pp"] = [[function(unit) return UnitPower(unit) end]],
 
 	["spp"] = [[function(unit)
@@ -1205,6 +1229,7 @@ local tagEvents = {
 	["missinghp"]           = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH",
 	["healmishp"]           = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH HealComm_HealStarted HealComm_HealUpdated HealComm_HealStopped HealComm_ModifierChanged HealComm_GUIDDisappeared",
 	["perhp"]               = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH",
+	["perstatus"]           = "UNIT_HEALTH_FREQUENT UNIT_MAXHEALTH UNIT_CONNECTION",
 	["pp"]                  = "UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["spp"]                 = "UNIT_POWER_FREQUENT UNIT_DISPLAYPOWER",
 	["maxpp"]               = "UNIT_MAXPOWER UNIT_DISPLAYPOWER",
