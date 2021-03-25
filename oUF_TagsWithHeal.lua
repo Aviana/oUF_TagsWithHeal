@@ -68,7 +68,6 @@ in the `oUF.Tags.SharedEvents` table as follows: `oUF.Tags.SharedEvents.EVENT_NA
 local _, ns = ...
 local oUF = ns.oUF
 local Private = oUF.Private
-local LCC = LibStub('LibClassicCasterino', true)
 local LHC = LibStub("LibHealComm-4.0")
 
 local _PATTERN = '%[..-%]+'
@@ -132,8 +131,6 @@ local _ENV = {
 			rawset(tbl, val, val)
 			return val
 	end}),
-	UnitCastingInfo = function(unit) return LCC:UnitCastingInfo(unit) end,
-	UnitChannelInfo = function(unit) return LCC:UnitChannelInfo(unit) end,
 	RARE = strmatch(GARRISON_MISSION_RARE,"%a*"),
 	GHOST = GetSpellInfo(8326),
 	LHC = LHC,
@@ -1083,10 +1080,10 @@ local tagStrings = {
 	end]],
 
 	["casttime"] = [[function(unit)
-		local name, _, texture, startTime, endTime = CastingInfo(unit)
+		local name, _, texture, startTime, endTime = UnitCastingInfo(unit)
 		local retTime
 		if not name then
-			name, _, texture, startTime, endTime = ChannelInfo(unit)
+			name, _, texture, startTime, endTime = UnitChannelInfo(unit)
 			if name then
 				retTime = (endTime / 1000) - GetTime()
 			end
@@ -1176,14 +1173,6 @@ local vars = setmetatable({}, {
 _ENV._VARS = vars
 
 local LibEvents = {
-	["UNIT_SPELLCAST_START"] = LCC,
-	["UNIT_SPELLCAST_DELAYED"] = LCC,
-	["UNIT_SPELLCAST_STOP"] = LCC,
-	["UNIT_SPELLCAST_FAILED"] = LCC,
-	["UNIT_SPELLCAST_INTERRUPTED"] = LCC,
-	["UNIT_SPELLCAST_CHANNEL_START"] = LCC,
-	["UNIT_SPELLCAST_CHANNEL_UPDATE"] = LCC,
-	["UNIT_SPELLCAST_CHANNEL_STOP"] = LCC,
 	["HealComm_HealStarted"] = LHC,
 	["HealComm_HealUpdated"] = LHC,
 	["HealComm_HealDelayed"] = LHC,
@@ -1272,6 +1261,7 @@ local tagEvents = {
 	["color"]               = "PLAYER_LOGIN", -- Dummy
 	["br"]                  = "PLAYER_LOGIN", -- Dummy
 	["castname"]            = "UNIT_SPELLCAST_START UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_STOP",
+	["casttime"]            = "UNIT_SPELLCAST_START UNIT_SPELLCAST_STOP UNIT_SPELLCAST_FAILED UNIT_SPELLCAST_INTERRUPTED UNIT_SPELLCAST_DELAYED UNIT_SPELLCAST_CHANNEL_START UNIT_SPELLCAST_CHANNEL_STOP UNIT_SPELLCAST_CHANNEL_INTERRUPTED UNIT_SPELLCAST_CHANNEL_UPDATE",
 	["xp"]                  = "PLAYER_XP_UPDATE UPDATE_EXHAUSTION",
 	["percxp"]              = "PLAYER_XP_UPDATE",
 	["xpPet"]               = "UNIT_PET_EXPERIENCE UNIT_LEVEL",
